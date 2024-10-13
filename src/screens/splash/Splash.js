@@ -2,21 +2,28 @@ import {ActivityIndicator, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './styles';
 import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Splash = ({navigation}) => {
   //   const [number, setNumber] = useState(1);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
   const getLoggedInUser =async ()=>{
-      
+      let userData = await AsyncStorage.getItem("user");
+      if(userData){
+        navigation.replace('HomeScreen');
+      }
+      else{
+        navigation.replace('Login');
+      }
   }
 
   useEffect(() => {
     setLoading(true);
     // console.log('AGYA', number);
     setTimeout(() => {
-      setLoading(false);
-      navigation.replace('Login');
+      setLoading(true);
+      getLoggedInUser();
     }, 1000);
 
     return () => console.log('Unmounted');

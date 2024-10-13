@@ -6,13 +6,15 @@ import { COLORS } from "../../utils/Color";
 import CustomButton from "../../components/Button";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const getRandomColor = () => {
     const randomIndex = Math.floor(Math.random() * COLORS.length);
     return COLORS[randomIndex];
   };
-  const logOutScreen = () => {
-    console.log('logOutScreen');
+  const handleLogOut = async() => {
+    await AsyncStorage.clear();
+    navigation.replace("Login");
+
   };
   const renderItem = ({ item, index }) => (
     <View
@@ -194,7 +196,7 @@ const HomeScreen = () => {
               </View>
             ))}
           </View>
-        <CustomButton onPressFunction={logOutScreen} btnText={"Log Out"}/>
+        <CustomButton onPressFunction={handleLogOut} btnText={"Log Out"}/>
         </ScrollView>
       </SafeAreaView>
     </View>
