@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
       let finalUserData = JSON.stringify(userData);
       console.log(finalUserData);
       await AsyncStorage.setItem("user", finalUserData);
-      navigation.replace("HomeScreen");
+      navigation.replace("BottomTabNavigation");
     } catch (e) {
       Toast.show({
         type: "error",

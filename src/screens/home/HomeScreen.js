@@ -3,19 +3,14 @@ import React from "react";
 import { STUDENTS } from "../../utils/data";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS } from "../../utils/Color";
-import CustomButton from "../../components/Button";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const HomeScreen = ({navigation}) => {
   const getRandomColor = () => {
     const randomIndex = Math.floor(Math.random() * COLORS.length);
     return COLORS[randomIndex];
   };
-  const handleLogOut = async() => {
-    await AsyncStorage.clear();
-    navigation.replace("Login");
-
-  };
+ 
   const renderItem = ({ item, index }) => (
     <View
       style={{
@@ -196,7 +191,7 @@ const HomeScreen = ({navigation}) => {
               </View>
             ))}
           </View>
-        <CustomButton onPressFunction={handleLogOut} btnText={"Log Out"}/>
+        
         </ScrollView>
       </SafeAreaView>
     </View>

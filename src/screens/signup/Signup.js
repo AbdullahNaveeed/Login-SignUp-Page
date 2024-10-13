@@ -12,7 +12,7 @@ const Signup = ({ navigation }) => {
     navigation.navigate("Login");
   };
   const goToHomeScreen = () => {
-    navigation.navigate("HomeScreen");
+    navigation.navigate("BottomTabNavigation");
   };
   return (
     <View

@@ -11,7 +11,7 @@ const Splash = ({navigation}) => {
   const getLoggedInUser =async ()=>{
       let userData = await AsyncStorage.getItem("user");
       if(userData){
-        navigation.replace('HomeScreen');
+        navigation.replace('BottomTabNavigation');
       }
       else{
         navigation.replace('Login');
@@ -19,8 +19,6 @@ const Splash = ({navigation}) => {
   }
 
   useEffect(() => {
-    setLoading(true);
-    // console.log('AGYA', number);
     setTimeout(() => {
       setLoading(true);
       getLoggedInUser();

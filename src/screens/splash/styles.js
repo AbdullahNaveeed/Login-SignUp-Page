@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
   },
   logoText: {
     color: 'red',
-    fontFamily: 'Inter',
     fontSize: 24,
     fontWeight: 'bold',
   },
