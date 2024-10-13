@@ -1,35 +1,76 @@
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraType } from 'expo-camera/build/legacy/Camera.types';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import * as Linking from 'expo-linking';
 
-export const Camera = () => {
-  const [facing, setFacing] = useState < CameraType > "back";
+const CameraScreen = () => {
+  const [facing, setFacing] = useState(CameraType.back);
+  const [scanned, setScanned] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
-    // Camera permissions are still loading.
-    return <View />;
+    return <View />; // Loading state while permission status is unknown
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>
-          We need your permission to show the camera
-        </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="Grant Permission" />
       </View>
     );
   }
 
-  function toggleCameraFacing() {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  }
+  const toggleCameraFacing = () => {
+    setFacing(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+  };
+
+  const handleBarCodeScanned = ({ type, data }) => {
+    if (scanned) return; // Prevent scanning while already scanned
+    setScanned(true);
+
+    Alert.alert(
+      'Open Link',
+      `Do you want to open ${data} in the default browser?`,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => setScanned(false),
+          style: 'cancel',
+        },
+        {
+          text: 'Open',
+          onPress: async () => {
+            const isUrl = data.startsWith('http://') || data.startsWith('https://');
+            if (isUrl) {
+              const supported = await Linking.canOpenURL(data);
+              if (supported) {
+                await Linking.openURL(data); // Opens URL in default browser
+              } else {
+                Alert.alert(`Cannot open URL: ${data}`);
+              }
+            } else {
+              Alert.alert('Scanned data is not a valid URL.');
+            }
+            setScanned(false); // Reset scanned state after action
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
+      <CameraView
+        style={styles.camera}
+        facing={facing}
+        onBarCodeScanned={handleBarCodeScanned}
+        barcodeScannerSettings={{
+          barcodeTypes: ["qr"],
+        }}
+      >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>
@@ -38,15 +79,17 @@ export const Camera = () => {
       </CameraView>
     </View>
   );
-};
+}
+
+export default CameraScreen;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   message: {
-    textAlign: "center",
+    textAlign: 'center',
     paddingBottom: 10,
   },
   camera: {
@@ -54,18 +97,18 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
     margin: 64,
   },
   button: {
     flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
+    alignSelf: 'flex-end',
+    alignItems: 'center',
   },
   text: {
     fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
